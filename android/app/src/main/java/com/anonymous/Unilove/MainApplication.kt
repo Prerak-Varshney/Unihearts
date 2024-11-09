@@ -1,4 +1,4 @@
-package com.unilove
+package com.anonymous.Unilove
 
 import android.app.Application
 import android.content.res.Configuration

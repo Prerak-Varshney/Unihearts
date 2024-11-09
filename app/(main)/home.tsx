@@ -42,37 +42,35 @@ const Home = () => {
         };
     }
 
-    const [profile, setProfile] = useState<Profile | null>(null);
+    const [profile, setProfile] = useState<Profile | null>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [noProfile, setNoProfile] = useState<boolean>(false);
     const [profileMatch, setProfileMatch] = useState<boolean>(false);
 
     useEffect(() => {
         getFirstProfile();
+        console.log(profile);
     }, []);
 
-    useEffect(() => {
-        console.log("Got new profile");
-    }, [profile]);
+    // useEffect(() => {
+    //     for(let i = 0; i < 5; i++){
+    //         console.log('\n');
+    //     }
+    //     console.log(profile);
+    // }, [profile]);
 
-    const fetchProfile = async (endpoint: string) => {
-        setIsLoading(true)
-        setProfileMatch(false);
-        try {
-            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/${endpoint}`, { email });
+    const getFirstProfile = async() => {
+        // setProfile(null);
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-first-profile`, { email });
+
+        try{
             if (response.data.success) {
                 setNoProfile(false);
-                setProfile(response.data[endpoint === 'get-first-profile' ? 'firstProfile' : endpoint === 'swipe-for-like' ? 'likedUser' : 'dislikedUser']);
-
-                console.log(response.data.isMatch)
-
-                if(response.data.isMatch){
-                    setProfileMatch(true);
-                }
-            } else {
+                setProfile(response.data.firstProfile);
+            }else{
                 setNoProfile(true);
             }
-        } catch (error:any) {
+        } catch(error:any){
             console.error("Error:", error.response?.data || error.message);
             setNoProfile(true);
         } finally {
@@ -80,19 +78,54 @@ const Home = () => {
         }
     }
 
-    const getFirstProfile = () => {
-        setProfile(null);
-        fetchProfile('get-first-profile');
+    const swipeForLike = async(userEmail, profileEmail) => {
+        // setProfile(null);
+        // setIsLoading(true)
+        setProfileMatch(false);
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/swipe-for-like`, { email: userEmail, profileEmail });
+
+        try{
+            if (response.data.success) {
+                // setNoProfile(false);
+                // setProfile(response.data.likedUser);
+                if(response.data.isMatch){
+                    setProfileMatch(true);
+                }
+                getFirstProfile();
+            }
+            // else{
+            //     setNoProfile(true);
+            // }
+        } catch(error:any){
+            console.error("Error:", error.response?.data || error.message);
+            setNoProfile(true);
+        } 
+        // finally {
+        //     setIsLoading(false);
+        // }
+        
     }
 
-    const swipeForLike = () => {
-        setProfile(null);
-        fetchProfile('swipe-for-like');
-    }
+    const swipeForDislike = async(userEmail, profileEmail) => {
+        // setProfile(null);
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/swipe-for-dislike`, { email: userEmail, profileEmail })
 
-    const swipeForDislike = () => {
-        setProfile(null);
-        fetchProfile('swipe-for-dislike');
+        try{
+            if (response.data.success) {
+                setNoProfile(false);
+                // setProfile(response.data.dislikedUser);
+                getFirstProfile();
+            }else{
+                setNoProfile(true);
+            }
+
+        } catch(error:any){
+            console.error("Error:", error.response?.data || error.message);
+            setNoProfile(true); 
+
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -119,17 +152,17 @@ const Home = () => {
                 </View>
             </View>}
 
-            {!isLoading && noProfile && <View className="w-screen h-screen flex justify-center items-center">
+            {noProfile && <View className="w-screen h-screen flex justify-center items-center z[999]">
                 <Text className="text-3xl font-semibold">No profiles available</Text>
             </View>}
-            {!isLoading && profile && (
+            {profile && (
                 <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', backgroundColor: 'white' }}>
                     <View className="w-full h-96">
                         <Image source={{ uri: profile.images.profilePic }} className="w-full h-full" resizeMode="cover" />
                         <View className="w-full h-24 flex flex-row justify-center items-center absolute bottom-0 left-0">
-                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={swipeForDislike} />
-                            <TouchableOpacity className="w-24 h-24 flex justify-center items-center border border-white bg-transparent rounded-full mx-6" onPress={swipeForLike} />
-                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={swipeForLike} />
+                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={() => swipeForDislike(email, profile.email)} />
+                            <TouchableOpacity className="w-24 h-24 flex justify-center items-center border border-white bg-transparent rounded-full mx-6" onPress={() => swipeForLike(email, profile.email)} />
+                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={() => swipeForLike(email, profile.email)} />
                         </View>
                     </View>
                     <View className="w-[90%] flex flex-row my-6">

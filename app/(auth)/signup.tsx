@@ -8,9 +8,6 @@ import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import Input from '@/components/Input';
 import {signup, verifyEmail, resendOtp} from '@/api/auth';
 
-
-
-
 const signUp = () => {
     const [value, setValue] = useState("");
     const [showOTP, setShowOTP] = useState(false);

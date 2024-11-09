@@ -12,8 +12,8 @@ import axios from 'axios'
 
 const MyProfile = () => {
 
-    // const { email } = useLocalSearchParams();
-    const email = "e22cseu1339@bennett.edu.in"
+    const { email } = useLocalSearchParams();
+    // const email = "e22cseu1339@bennett.edu.in"
 
     interface Profile {
         profilePic: string;

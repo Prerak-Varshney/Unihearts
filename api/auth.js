@@ -3,6 +3,7 @@ import axios from 'axios';
 const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/auth`;
 
 export const signup = async (email) => {
+    
     try{
         const response = await axios.post(`${API_URL}/signup`, {email});
         return response.data;
@@ -36,6 +37,7 @@ export const verifyEmail = async (email, otp) => {
 }
 
 export const signin = async (email) => {
+    console.log(API_URL);
     try{
         const response = await axios.post(`${API_URL}/signin`, {email});
         return response.data;

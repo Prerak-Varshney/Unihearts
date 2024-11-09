@@ -69,31 +69,44 @@ const LikedYouProfileVisit = () => {
         
     }
 
-    const fetchProfile = async (endpoint: string) => {
-        try {
-            const response = await axios.post(`http://192.168.31.254:3000/api/get-profiles/${endpoint}`, { email });
-            if (response.data.success) {
+    const swipeForLike = async() => {
+        // fetchProfile('individual-like');
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/individual-like`, { email: userEmail, profileEmail });
+
+        try{
+            if(response.data.success){
                 router.replace({
                     pathname: './matches',
                     params: {email: userEmail}
                 })
-            } else {
-                return console.log("Error while liking match profile: ", response.data.message);
+            }else{
+                return console.log("Error while actions individual profile: ", response.data.message);
             }
-        } catch (error:any) {
-            console.error("Error:", error.response?.data?.message || error.message);
-            // setNoProfile(true);
-        } finally {
+        }catch(error:any){
+            console.error("Error:", error.response?.data || error.message);
+        } finally{
             setIsLoading(false);
         }
     }
 
-    const swipeForLike = () => {
-        fetchProfile('swipe-for-like');
-    }
+    const swipeForDislike = async() => {
+        // fetchProfile('individual-dislike');
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/individual-dislike`, { email: userEmail, profileEmail });
 
-    const swipeForDislike = () => {
-        fetchProfile('swipe-for-dislike');
+        try{
+            if(response.data.success){
+                router.replace({
+                    pathname: './home',
+                    params: {email: userEmail}
+                })
+            }else{
+                return console.log("Error while actions individual profile: ", response.data.message);
+            }
+        }catch(error:any){
+            console.error("Error:", error.response?.data || error.message);
+        } finally{
+            setIsLoading(false);
+        }
     }
 
     return (
