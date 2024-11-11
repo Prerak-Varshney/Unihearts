@@ -49,18 +49,10 @@ const Home = () => {
 
     useEffect(() => {
         getFirstProfile();
-        console.log(profile);
     }, []);
 
-    // useEffect(() => {
-    //     for(let i = 0; i < 5; i++){
-    //         console.log('\n');
-    //     }
-    //     console.log(profile);
-    // }, [profile]);
-
     const getFirstProfile = async() => {
-        // setProfile(null);
+        setIsLoading(true);
         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-first-profile`, { email });
 
         try{
@@ -79,31 +71,20 @@ const Home = () => {
     }
 
     const swipeForLike = async(userEmail, profileEmail) => {
-        // setProfile(null);
-        // setIsLoading(true)
         setProfileMatch(false);
         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/swipe-for-like`, { email: userEmail, profileEmail });
 
         try{
             if (response.data.success) {
-                // setNoProfile(false);
-                // setProfile(response.data.likedUser);
                 if(response.data.isMatch){
                     setProfileMatch(true);
                 }
                 getFirstProfile();
             }
-            // else{
-            //     setNoProfile(true);
-            // }
         } catch(error:any){
             console.error("Error:", error.response?.data || error.message);
             setNoProfile(true);
         } 
-        // finally {
-        //     setIsLoading(false);
-        // }
-        
     }
 
     const swipeForDislike = async(userEmail, profileEmail) => {
@@ -113,7 +94,6 @@ const Home = () => {
         try{
             if (response.data.success) {
                 setNoProfile(false);
-                // setProfile(response.data.dislikedUser);
                 getFirstProfile();
             }else{
                 setNoProfile(true);
@@ -122,9 +102,6 @@ const Home = () => {
         } catch(error:any){
             console.error("Error:", error.response?.data || error.message);
             setNoProfile(true); 
-
-        } finally {
-            setIsLoading(false);
         }
     }
 
