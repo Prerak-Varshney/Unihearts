@@ -11,6 +11,8 @@ import {router} from 'expo-router';
 
 import axios from 'axios';
 
+import Payment from './payment';
+
 const Chats = () => {
     const { email } = useLocalSearchParams();
     // const [email, setEmail] = useState<string>('legendaryginga@gmail.com');
@@ -24,8 +26,8 @@ const Chats = () => {
     }
 
     const [profiles, setProfiles] = useState<Profile[]>([]);
-    const [chatId, setChatId] = useState<string>('');
     const [userId, setUserId] = useState<string>('');
+    const [inSubscription, setInSubscription] = useState(false);
 
     useEffect(() => {
         getYourMatchProfiles();
@@ -34,6 +36,12 @@ const Chats = () => {
     const getYourMatchProfiles = async () => {
         try{
             const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-all-your-matches-profiles`, { email });
+
+            if(response.data.subscriptionPlan === 'Basic' || response.data.subscriptionPlan === 'Premium'){
+                setInSubscription(true);
+            }else{
+                setInSubscription(false);
+            }
 
             setProfiles(response.data.allYourMatches);
             setUserId(response.data.userId);
@@ -60,6 +68,23 @@ const Chats = () => {
         <SafeAreaView className='w-full h-full bg-white'>
             <BottomNavigator value={email}/>
             <StatusBar style="dark" />
+
+            {!inSubscription && (
+                <View className='w-screen h-screen flex flex-col justify-center items-center p-2 bg-white rounded-lg'>
+                    <Text className='text-black text-xl text-center '>Basic Subscription Required</Text>
+
+                    <TouchableOpacity
+                        className='w-full flex justify-center items-center p-2 bg-black rounded-lg'
+                        onPress={() => {router.push({
+                            pathname: './payment',
+                            params: { email }
+                        })}}
+                    >
+                        <Text className='text-white text-center text-base'>Subscribe Now</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
             <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', backgroundColor: 'white' }}>
                 <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black text-center my-10">Your Matches</Text>
                 {profiles.length > 0 ? (

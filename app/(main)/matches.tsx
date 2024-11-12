@@ -24,16 +24,22 @@ const Matches = () => {
     }
 
     const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [inSubscription, setInSubscription] = useState(false);
 
 
     useEffect(() => {
         getLikedYouProfiles();
-        // console.log(profiles)
     }, [])
 
     const getLikedYouProfiles = async () => {
         try{
             const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-liked-you-profiles`, { email });
+
+            if(response.data.subscriptionPlan === 'Premium'){
+                setInSubscription(true);
+            }else{
+                setInSubscription(false);
+            }
 
             setProfiles(response.data.likedYouProfiles);
 
@@ -57,6 +63,22 @@ const Matches = () => {
         <SafeAreaView className='w-full h-full bg-white'>
             <BottomNavigator value={email}/>
             <StatusBar style="dark" />
+
+            {!inSubscription && (
+                <View className='w-screen h-screen flex flex-col justify-center items-center p-2 bg-white rounded-lg'>
+                    <Text className='text-black text-xl text-center '>Premium Subscription Required</Text>
+
+                    <TouchableOpacity
+                        className='w-full flex justify-center items-center p-2 bg-black rounded-lg'
+                        onPress={() => {router.push({
+                            pathname: './payment',
+                            params: { email }
+                        })}}
+                    >
+                        <Text className='text-white text-center text-base'>Subscribe Now</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
 
             <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', backgroundColor: 'white' }}>
                 <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black text-center my-10">See Who Liked You</Text>

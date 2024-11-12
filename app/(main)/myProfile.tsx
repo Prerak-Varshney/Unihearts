@@ -58,7 +58,7 @@ const MyProfile = () => {
 
             return setIsLoading(false);
 
-        }catch(error){
+        }catch(error:any){
             if (error.response) {
                 setIsLoading(false);
                 console.error("Error:", error.response.data.message);
