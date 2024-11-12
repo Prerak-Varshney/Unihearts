@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -137,9 +137,17 @@ const Home = () => {
                     <View className="w-full h-96">
                         <Image source={{ uri: profile.images.profilePic }} className="w-full h-full" resizeMode="cover" />
                         <View className="w-full h-24 flex flex-row justify-center items-center absolute bottom-0 left-0">
-                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={() => swipeForDislike(email, profile.email)} />
-                            <TouchableOpacity className="w-24 h-24 flex justify-center items-center border border-white bg-transparent rounded-full mx-6" onPress={() => swipeForLike(email, profile.email)} />
-                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-transparent rounded-full" onPress={() => swipeForLike(email, profile.email)} />
+                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-white rounded-full overflow-hidden" onPress={() => swipeForDislike(email, profile.email)}>
+                                <Image source={require('../../assets/Images/cross.png')} className="w-7 h-7" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity className="w-24 h-24 flex justify-center items-center border border-white bg-white rounded-full mx-6 overflow-hidden" onPress={() => swipeForLike(email, profile.email)} >
+                                <Image source={require('../../assets/Images/icon.png')} className="w-28 h-28" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity className="w-20 h-20 flex justify-center items-center border border-white bg-white rounded-full overflow-hidden" onPress={() => swipeForLike(email, profile.email)} >
+                                <Image source={require('../../assets/Images/star.png')} className="w-8 h-8" />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View className="w-[90%] flex flex-row my-6">

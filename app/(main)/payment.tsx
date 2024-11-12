@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {View, Text, TouchableOpacity, Touchable} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import {useLocalSearchParams, router} from 'expo-router';
@@ -9,19 +9,19 @@ import BottomNavigator from "@/components/BottomNavigator";
 
 import RazorpayCheckout from 'react-native-razorpay';
 
-const SubscriptionCard = ({Title, Price, Description, onPressButton}) => (
-    <View className='w-[300px] h-[300px] bg-black flex flex-col justify-between items-center rounded-md mb-10'>
-        <View className='w-full h-12 flex justify-center items-center border-b border-b-white'>
-            <Text className='text-xl font-bold text-white'>{Title}</Text>
+const SubscriptionCard = ({Title, Price, Description, onPressButton, otherClassNames}) => (
+    <View className={`w-52 h-52 bg-black flex flex-col justify-between items-center rounded-md ${otherClassNames}`}>
+        <View className='w-full h-10 flex justify-center items-center border-b border-b-white'>
+            <Text className='text-base font-bold text-white'>{Title}</Text>
         </View>
 
-        <View className='w-full h-[200px] flex justify-center items-center'>
-            <Text className='text-lg text-white text-center'>{Description}</Text>
+        <View className='w-full h-32 flex justify-center items-center'>
+            <Text className='text-base text-white text-center'>{Description}</Text>
         </View>
 
-        <TouchableOpacity className='bg-white border border-black w-full h-12 flex justify-center items-center rounded-b-md'
+        <TouchableOpacity className='bg-white border border-black w-full h-10 flex justify-center items-center rounded-b-md'
         onPress={onPressButton}>
-            <Text className='text-xl font-bold text-black'>{Price}</Text>
+            <Text className='text-base font-bold text-black'>{Price}</Text>
         </TouchableOpacity>
     </View>
 )
@@ -161,11 +161,9 @@ const Payment = () => {
     }
     
     return(
-        <SafeAreaView className="flex-1 w-full h-full bg-white justify-start items-center flex flex-col">
+        <SafeAreaView className="flex-1 w-full h-full bg-white justify-center items-center flex flex-col">
             <StatusBar style="dark" />
             <BottomNavigator value={email}/>
-
-            <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black text-center">Choose your plan</Text>
 
             {/* <View className="w-full flex justify-evenly items-center 
             "> */}
@@ -174,6 +172,7 @@ const Payment = () => {
                         <SubscriptionCard 
                             Title={"Premium Plan"}
                             Price={"₹99"}
+                            otherClassNames={"w-80 h-80"}
                             Description={"All Basic\nComment on swipes\nKnow who liked you"}
                             onPressButton={buyPremiumSubscription}
                         />
@@ -187,21 +186,42 @@ const Payment = () => {
                 }
                     
                 {subscriptionType === "Free" && 
-                    <View className='w-full h-full flex flex-col justify-evenly items-center'>
-                        <SubscriptionCard 
-                            Title={"Basic Plan"} 
-                            Price={"₹49"} 
-                            Description={
-                                "Unlimited Swipes\nUnlimited Matches\nChat on match\n24/7 Support"
-                            }
-                            onPressButton={buyBasicSubscription}
-                        />
-                        <SubscriptionCard 
-                            Title={"Premium Plan"}
-                            Price={"₹99"}
-                            Description={"All Basic\nComment on swipes\nKnow who liked you"}
-                            onPressButton={buyPremiumSubscription}
-                        />
+                    <View className='w-full h-auto flex flex-col justify-evenly items-center'>
+                        <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black text-center">Choose your plan</Text>
+
+                        <Image source={require('../../assets/Images/flowers.png')} className="w-80 h-80 my-4"/>
+
+                        <ScrollView horizontal contentContainerStyle={{flexGrow: 1, justifyContent: 'center', alignItems: 'center', gap: 10}} showsHorizontalScrollIndicator={false} >
+
+                            <SubscriptionCard 
+                                Title={"Free Plan"} 
+                                Price={"Free"}
+                                Description={
+                                    "Unlimited Swipes\n24/7 Support"
+                                }
+                                onPressButton={() => {
+                                    router.push({
+                                        pathname: '/home', 
+                                        params: {email: email}
+                                    })}
+                                }
+                            />
+
+                            <SubscriptionCard 
+                                Title={"Basic Plan"} 
+                                Price={"₹49"} 
+                                Description={
+                                    "Unlimited Swipes\nUnlimited Matches\nChat on match\n24/7 Support"
+                                }
+                                onPressButton={buyBasicSubscription}
+                            />
+                            <SubscriptionCard 
+                                Title={"Premium Plan"}
+                                Price={"₹99"}
+                                Description={"All Basic\nComment on swipes\nKnow who liked you"}
+                                onPressButton={buyPremiumSubscription}
+                            />
+                        </ScrollView>
                     </View>
                 }
             {/* </View> */}
