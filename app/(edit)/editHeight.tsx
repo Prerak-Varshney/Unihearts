@@ -1,15 +1,64 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import { postHeightDetails } from "@/api/userDetails";
-import Loading from "../../components/Loading";
+import axios from 'axios';
+import Loading from '../../components/Loading';
 
 const Height = () => {
     const { email } = useLocalSearchParams(); 
     const [height, setHeight] = useState(5.7);
     const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+    interface Profile {
+        profilePic: string;
+        firstName: string;
+        lastName: string; 
+        birthday: string;
+        gender: string;
+        sexualOrientation: string;
+        height: string;
+        college: string;
+        course: string;
+        year: string;
+        images: {
+            profilePic: string;
+            image1: string;
+            image2: string;
+            image3: string;
+            image4: string;
+            image5: string;
+        };
+        narcotics: {
+            smoke: boolean;
+            drink: boolean;
+            weed: boolean;
+        };
+    }
+    const [profile, setProfile] = useState<Profile | null>(null);
+
+    useEffect(() => {
+        fetchMyProfile();
+    }, []);
+
+    const fetchMyProfile = async() => {
+        try{
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-my-profile`, {email: email});
+
+            const data = response.data.user;
+            setProfile(data);
+            setHeight(parseFloat(data.height));
+
+        }catch(error:any){
+            if (error.response) {
+                console.log("Error:", error.response.data.message);
+            } else {
+                console.log("Error:", error.message);
+            }
+        }
+    }
 
     const heights = [];
     for (let feet = 3; feet <= 7; feet++) {
@@ -26,11 +75,11 @@ const Height = () => {
         console.log(height);
         const response = await postHeightDetails(email, height);
         router.replace({
-            pathname: './narcotics',
+            pathname: './editProfile',
             params: { email },
         });
-        console.log(response);
         setIsLoading(false);
+        console.log(response);
     }
 
     return (
@@ -48,18 +97,17 @@ const Height = () => {
                     <WheelPicker
                         data={heights}
                         onValueChanged={({item: {value}}) => setHeight(parseFloat(value))}
-                        value={"5.7"}
+                        value={profile?.height}
                     />
                 </View>
 
                 <View className="w-full justify-end items-center flex flex-col">
                     <TouchableOpacity className='bg-black w-4/5 h-12 rounded-2xl flex justify-center items-center' onPress={() => {heightConfirm()}}>
-                        <Text className='text-white font-semibold text-sm'>Confirm</Text>
+                        <Text className='text-white font-semibold text-sm'>Edit Height</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         }
-
         </SafeAreaView>
     );
 };

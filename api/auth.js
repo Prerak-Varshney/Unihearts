@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/auth`;
 
@@ -40,6 +41,7 @@ export const signin = async (email) => {
     console.log(API_URL);
     try{
         const response = await axios.post(`${API_URL}/signin`, {email});
+
         return response.data;
 
     }catch (error){
@@ -55,7 +57,10 @@ export const signin = async (email) => {
 
 export const verifySignin = async (email, otp) => {
     try{
-        const response = await axios.post(`${API_URL}/verify-signin`, {otp});
+        const response = await axios.post(`${API_URL}/verify-signin`, {otp}, {withCredentials: true});
+        if(response.data.success && response.data.isProfileComplete){
+            await SecureStore.setItemAsync('email', response.data.userEmail);
+        }
         return response.data;
 
     }catch (error){

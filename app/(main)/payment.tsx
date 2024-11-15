@@ -16,7 +16,7 @@ const SubscriptionCard = ({Title, Price, Description, onPressButton, otherClassN
         </View>
 
         <View className='w-full h-32 flex justify-center items-center'>
-            <Text className='text-base text-white text-center'>{Description}</Text>
+            <Text className='text-sm text-white text-center'>{Description}</Text>
         </View>
 
         <TouchableOpacity className='bg-white border border-black w-full h-10 flex justify-center items-center rounded-b-md'
@@ -52,59 +52,59 @@ const Payment = () => {
         
     }
     
-    const buyBasicSubscription = async() => {
-        try{
-            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/payments/buy-basic-subscription`, {email: email});
+    // const buyBasicSubscription = async() => {
+    //     try{
+    //         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/payments/buy-basic-subscription`, {email: email});
     
-            console.log(response.data.subscription.id);
+    //         console.log(response.data.subscription.id);
     
-            if(response.data.success){
-                const options = {
-                    key: 'rzp_test_df9pYQrTw8Pj58',
-                    subscription_id: response.data.subscription,
-                    name: "UniHearts",
-                    description: "UniHearts Basic Plan",
-                    prefill: {
-                        name: response.data.customerName,
-                        email: response.data.customerEmail,
-                        contact: "9999999999"
-                    }
-                }
+    //         if(response.data.success){
+    //             const options = {
+    //                 key: process.env.EXPO_PUBLIC_RAZORPAY_KEY,
+    //                 subscription_id: response.data.subscription,
+    //                 name: "UniHearts",
+    //                 description: "UniHearts Basic Plan",
+    //                 prefill: {
+    //                     name: response.data.customerName,
+    //                     email: response.data.customerEmail,
+    //                     contact: "9999999999"
+    //                 }
+    //             }
     
-                const razorpayPayment =  RazorpayCheckout.open(options).then(async(data) => {
-                    console.log(".then", data)
-                    const paymentVerificationResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/payments/verify-payment`, {
-                        email: email,
-                        plan: "Basic",
-                        paymentId: data.razorpay_payment_id,
-                        subscriptionId: data.razorpay_subscription_id,
-                        signature: data.razorpay_signature,
-                    });
+    //             const razorpayPayment =  RazorpayCheckout.open(options).then(async(data) => {
+    //                 console.log(".then", data)
+    //                 const paymentVerificationResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/payments/verify-payment`, {
+    //                     email: email,
+    //                     plan: "Basic",
+    //                     paymentId: data.razorpay_payment_id,
+    //                     subscriptionId: data.razorpay_subscription_id,
+    //                     signature: data.razorpay_signature,
+    //                 });
                 
-                    if (paymentVerificationResponse.data.success) {
-                        console.log("Payment successful!");
-                    } else {
-                        console.log("Payment verification failed");
-                    }
+    //                 if (paymentVerificationResponse.data.success) {
+    //                     console.log("Payment successful!");
+    //                 } else {
+    //                     console.log("Payment verification failed");
+    //                 }
     
     
-                }).catch((error) => {
-                    console.log("here .catch", error)
-                })
+    //             }).catch((error) => {
+    //                 console.log("here .catch", error)
+    //             })
                 
-            }else{
-                console.log("Error while loading Razorpay in Frontend");
-            }
-        } catch(error){
-            if(error.response) {
-                console.log("Error:", error.response.data.message);
-                return error.response.data;
-            }else{
-                console.log("Error:", error.message);
-                return { success: false, message: "An unknown error occurred in Payment" };
-            }
-        }
-    }
+    //         }else{
+    //             console.log("Error while loading Razorpay in Frontend");
+    //         }
+    //     } catch(error){
+    //         if(error.response) {
+    //             console.log("Error:", error.response.data.message);
+    //             return error.response.data;
+    //         }else{
+    //             console.log("Error:", error.message);
+    //             return { success: false, message: "An unknown error occurred in Payment" };
+    //         }
+    //     }
+    // }
 
     const buyPremiumSubscription = async() => {
         try{
@@ -114,7 +114,7 @@ const Payment = () => {
     
             if(response.data.success){
                 const options = {
-                    key: 'rzp_test_df9pYQrTw8Pj58',
+                    key: process.env.EXPO_PUBLIC_RAZORPAY_KEY,
                     subscription_id: response.data.subscription,
                     name: "UniHearts",
                     description: "UniHearts Premium Plan",
@@ -167,7 +167,7 @@ const Payment = () => {
 
             {/* <View className="w-full flex justify-evenly items-center 
             "> */}
-                {subscriptionType === "Basic" && 
+                {/* {subscriptionType === "Basic" && 
                     <View className='w-full h-full flex flex-col justify-center items-center'>
                         <SubscriptionCard 
                             Title={"Premium Plan"}
@@ -177,7 +177,7 @@ const Payment = () => {
                             onPressButton={buyPremiumSubscription}
                         />
                     </View>
-                }
+                } */}
 
                 {subscriptionType === "Premium" && 
                     <View className='w-screen h-screen flex flex-col justify-center items-center'>
@@ -191,13 +191,15 @@ const Payment = () => {
 
                         <Image source={require('../../assets/Images/flowers.png')} className="w-80 h-80 my-4"/>
 
+                        <Text className="w-4/5 flex flex-row justify-start items-center text-xs font-bold text-red-500 text-center mb-4">*Please refresh or re-open App after Payment</Text>
+
                         <ScrollView horizontal contentContainerStyle={{flexGrow: 1, justifyContent: 'center', alignItems: 'center', gap: 10}} showsHorizontalScrollIndicator={false} >
 
                             <SubscriptionCard 
                                 Title={"Free Plan"} 
                                 Price={"Free"}
                                 Description={
-                                    "Unlimited Swipes\n24/7 Support"
+                                    "5 Swipes\n24/7 Support"
                                 }
                                 onPressButton={() => {
                                     router.push({
@@ -207,18 +209,18 @@ const Payment = () => {
                                 }
                             />
 
-                            <SubscriptionCard 
+                            {/* <SubscriptionCard 
                                 Title={"Basic Plan"} 
                                 Price={"₹49"} 
                                 Description={
                                     "Unlimited Swipes\nUnlimited Matches\nChat on match\n24/7 Support"
                                 }
                                 onPressButton={buyBasicSubscription}
-                            />
+                            /> */}
                             <SubscriptionCard 
                                 Title={"Premium Plan"}
-                                Price={"₹99"}
-                                Description={"All Basic\nComment on swipes\nKnow who liked you"}
+                                Price={"₹69"}
+                                Description={"Unlimited Swipes\nChat on match\nKnow who liked you and like them back"}
                                 onPressButton={buyPremiumSubscription}
                             />
                         </ScrollView>

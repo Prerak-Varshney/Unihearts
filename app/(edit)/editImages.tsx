@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -18,7 +18,32 @@ const SelectImage = () => {
     const [image5, setImage5] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState<Boolean>(false);
-    
+    const [profile, setProfile] = useState<Profile | null>(null);
+
+    useEffect(() => {
+        fetchMyProfile();
+    }, []);
+
+    const fetchMyProfile = async() => {
+        try{
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-my-profile`, {email: email});
+
+            const data = response.data.user;
+            setProfile(data);
+            setImage1(data.images.image1);
+            setImage2(data.images.image2);
+            setImage3(data.images.image3);
+            setImage4(data.images.image4);
+            setImage5(data.images.image5);
+
+        }catch(error:any){
+            if (error.response) {
+                console.log("Error:", error.response.data.message);
+            } else {
+                console.log("Error:", error.message);
+            }
+        }
+    }
 
     const pickImage = async (setImage) => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -91,15 +116,8 @@ const SelectImage = () => {
                 }
             );
 
-            // console.log(image); 
-
-            // router.replace({
-            //     pathname: "../(main)/home",
-            //     params: { email },
-            // });
-
             router.replace({
-                pathname: "./choosePrompts",
+                pathname: "./editProfile",
                 params: { email },
             });
             
@@ -120,8 +138,8 @@ const SelectImage = () => {
 
     return (
         <SafeAreaView className="flex-1 w-full h-full bg-white justify-evenly items-center flex flex-col">
-            {isLoading ? <Loading /> :
-            <View className="flex-1 w-full h-full bg-white justify-evenly items-center flex flex-col">
+            {isLoading ? <Loading /> : 
+            <View className='flex-1 w-full h-full bg-white justify-evenly items-center flex flex-col'>
                 <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black">
                     Boost your profile with eye-catching images!
                 </Text>
@@ -192,7 +210,7 @@ const SelectImage = () => {
                         className='bg-black w-4/5 h-12 rounded-2xl flex justify-center items-center'
                         onPress={imageConfirm} 
                     >
-                        <Text className='text-white font-semibold text-sm'>Let's Go</Text>
+                        <Text className='text-white font-semibold text-sm'>Edit Images</Text>
                     </TouchableOpacity>
                 </View>
             </View>

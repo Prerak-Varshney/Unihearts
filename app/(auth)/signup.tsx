@@ -14,6 +14,7 @@ const signUp = () => {
     const [OTPValue, setOTPValue] = useState("");
     const [isResendOtpVisible, setIsResendOtpVisible] = useState(true);
     const [isDefaultTimerVisible, setIsDefaultTimerVisible] = useState(true);
+    const [isErrorMessage, setIsErrorMessage] = useState(false);
 
     const otpRef = useRef(null);
 
@@ -33,6 +34,9 @@ const signUp = () => {
 
             if(response.success){
                 setShowOTP(true);
+                setIsErrorMessage(false);
+            }else{
+                setIsErrorMessage(true);
             }
             
             console.log(response);
@@ -68,12 +72,14 @@ const signUp = () => {
                     <StatusBar style="dark" />
                     
                     <View className='w-4/5 flex justify-center items-center mb-10'>
-                        <Text className='text-black text-sm font-semibold text-center'>Please enter your valid student Mail-id, as this app is exclusive for Bennetians.</Text>
+                        <Text className='text-black text-sm font-semibold text-center'>Please enter your valid student Mail-id, as this app is exclusive for College Students.</Text>
+                        <Text className='text-gray-500 text-sm font-semibold text-center mt-2'>*This won't be displayed anywhere</Text>
+                        {isErrorMessage && <Text className='text-red-500 text-sm font-semibold text-center mt-2'>User already exists or invalid email</Text>}
                     </View>
 
                     <Input 
                         otherClassName={`${showOTP ? 'border-gray-400 text-gray-400' : 'border-black text-black'}`}
-                        placeHolder={"eroll@bennett.edu.in"} 
+                        placeHolder={"name@college.com"} 
                         value={value} 
                         setValue={setValue}
                         keyboardType="email-address"
@@ -126,6 +132,7 @@ const signUp = () => {
                         }
 
                     </View>}
+                    {showOTP && <Text className='text-red-500 text-xs font-semibold mt-2'>*Please check your Junk Folder</Text>}
                     
                     <TouchableOpacity className='bg-black w-4/5 h-12 rounded-2xl flex justify-center items-center mb-6 mt-10' onPress={() => {signUpOnPress()}}>
                         <Text className='text-white font-semibold text-lg'>{showOTP ? "Verify" : "Sign Up"}</Text>

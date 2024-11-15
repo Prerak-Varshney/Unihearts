@@ -1,13 +1,11 @@
-import { useRef, useState } from 'react';
-
+import { useRef, useState, useEffect } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import { StatusBar } from 'expo-status-bar';
-
 import { router } from 'expo-router';
 import { onboarding } from '@/constants/index';
-// import CustomButton from '@/components/CustomButton';
+import * as SecureStore from 'expo-secure-store';
 
 export default function OnBoarding() {
 
@@ -15,6 +13,10 @@ export default function OnBoarding() {
     const [activeIndex, setActiveIndex] = useState(0)
     const isLastSlide = activeIndex === onboarding.length - 1;
     const isMidSlide = activeIndex === onboarding.length - 2;
+
+    useEffect(() => {
+        handleToken();
+    }, [])
 
     const getButtonText = () => {
         if(isLastSlide){
@@ -24,6 +26,23 @@ export default function OnBoarding() {
         }else{
             return "That's Great"
         }
+    }
+
+    const handleToken = async() => {
+        try{
+            const email = await SecureStore.getItemAsync('email');
+            if(!email){
+                return
+            }else {
+                router.replace({
+                    pathname: '../(main)/home',
+                    params: { email },
+                })
+            }
+        }catch(error){
+            console.log("Email not found in secure storage probably", error)
+        }
+
     }
 
     return (

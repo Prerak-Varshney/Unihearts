@@ -16,6 +16,7 @@ const signIn = () => {
     const [OTPValue, setOTPValue] = useState("");
     const [isResendOtpVisible, setIsResendOtpVisible] = useState(true);
     const [isDefaultTimerVisible, setIsDefaultTimerVisible] = useState(true);
+    const [isErrorMessage, setIsErrorMessage] = useState(false);
 
     const otpRef = useRef(null);
 
@@ -34,6 +35,9 @@ const signIn = () => {
 
             if(response.success){
                 setShowOTP(true)
+                setIsErrorMessage(false);
+            }else{
+                setIsErrorMessage(true);
             }
             
             console.log("showOTP false");
@@ -81,11 +85,13 @@ const signIn = () => {
 
                         <View className='w-4/5 flex justify-center items-center mb-10'>
                             <Text className='text-black text-sm font-semibold text-center'>Please enter your registered student email, to complete your sign in.</Text>
+                            <Text className='text-gray-500 text-sm font-semibold text-center mt-2'>*This won't be displayed anywhere</Text>
+                            {isErrorMessage && <Text className='text-red-500 text-sm font-semibold text-center mt-2'>User does not exists or invalid email</Text>}
                         </View>
 
                         <Input 
                             otherClassName={`${showOTP ? 'border-gray-400 text-gray-400' : 'border-black text-black'}`}
-                            placeHolder={"eroll@bennett.edu.in"} 
+                            placeHolder={"name@college.com"} 
                             value={value} 
                             setValue={setValue}
                             keyboardType="email-address"
@@ -135,9 +141,14 @@ const signIn = () => {
                                 {({ remainingTime }) => <Text>{remainingTime}</Text>}
                             </CountdownCircleTimer>
                         </View>
+                         
                         }
 
-                    </View>}
+                    </View>
+
+                    }
+                    {showOTP && <Text className='text-red-500 text-xs font-semibold mt-2'>*Please check your Junk Folder</Text>}
+                    
                         
                         <TouchableOpacity className='bg-black w-4/5 h-12 rounded-2xl flex justify-center items-center mb-6 mt-10' onPress={() => {signInOnPress()}}>
                             <Text className='text-white font-semibold text-lg'>{showOTP ? "Verify" : "Sign In"}</Text>

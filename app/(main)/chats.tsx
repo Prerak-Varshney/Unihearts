@@ -1,21 +1,17 @@
+import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
-
+import { useLocalSearchParams, router } from 'expo-router';
 import BottomNavigator from "@/components/BottomNavigator";
 import { StatusBar } from 'expo-status-bar';
-
-import { useState, useEffect } from 'react';
-
-import {router} from 'expo-router';
-
 import axios from 'axios';
 
-import Payment from './payment';
+import Loading from '@/components/Loading';
+import SubscriptionRedirectComponent from '@/components/subscriptionRedirectComponent';
+
 
 const Chats = () => {
     const { email } = useLocalSearchParams();
-    // const [email, setEmail] = useState<string>('legendaryginga@gmail.com');
     interface Profile {
         _id: string;
         images: {
@@ -28,16 +24,18 @@ const Chats = () => {
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [userId, setUserId] = useState<string>('');
     const [inSubscription, setInSubscription] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         getYourMatchProfiles();
     }, [])
 
     const getYourMatchProfiles = async () => {
+        setIsLoading(true)
         try{
             const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-all-your-matches-profiles`, { email });
 
-            if(response.data.subscriptionPlan === 'Basic' || response.data.subscriptionPlan === 'Premium'){
+            if(response.data.subscriptionPlan === 'Premium'){
                 setInSubscription(true);
             }else{
                 setInSubscription(false);
@@ -53,11 +51,13 @@ const Chats = () => {
             }else{
                 console.log("Error:", error.message);
             }
+        } finally{
+            setIsLoading(false)
         }
     }
 
     const openYourMatchProfiles = (email:string, chatId:string, currentUserId:string, otherUserId:string, otherUserProfilePic:string, otherUserFullName:string, otherUserEmail:string) => {
-        router.push({
+        router.replace({
             pathname: './chatScreen',
             params: {email, chatId, currentUserId, otherUserId, otherUserProfilePic, otherUserFullName, otherUserEmail}
         })
@@ -68,22 +68,8 @@ const Chats = () => {
         <SafeAreaView className='w-full h-full bg-white'>
             <BottomNavigator value={email}/>
             <StatusBar style="dark" />
-
-            {!inSubscription && (
-                <View className='w-screen h-screen flex flex-col justify-center items-center p-2 bg-white rounded-lg'>
-                    <Text className='text-black text-xl text-center '>Basic Subscription Required</Text>
-
-                    <TouchableOpacity
-                        className='w-full flex justify-center items-center p-2 bg-black rounded-lg'
-                        onPress={() => {router.push({
-                            pathname: './payment',
-                            params: { email }
-                        })}}
-                    >
-                        <Text className='text-white text-center text-base'>Subscribe Now</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            {isLoading && ( <Loading /> )}
+            {!inSubscription && ( <SubscriptionRedirectComponent email={email} subscriptionType='Basic Subscription Required' /> )}
 
             <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', backgroundColor: 'white' }}>
                 <Text className="w-4/5 flex flex-row justify-start items-center text-3xl font-bold text-black text-center my-10">Your Matches</Text>
@@ -96,7 +82,7 @@ const Chats = () => {
                             userId, 
                             profile._id, 
                             profile.images.profilePic, 
-                            profile.fullName, 
+                            profile.firstName, 
                             profile.email)}}>
                             <View className='h-full w-auto flex justify-center items-center mr-6'>
                                 <Image source={{ uri: profile.images.profilePic }} className='w-16 h-16 rounded-full' />

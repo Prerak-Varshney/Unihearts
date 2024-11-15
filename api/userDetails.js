@@ -67,9 +67,9 @@ export const postHeightDetails = async (email, height) => {
     }
 }
 
-export const postNarcoticsDetails = async (email, isSmokeVisible, isDrinkVisible, isWeedVisible, isSmoke, isDrink, isWeed) => {
+export const postNarcoticsDetails = async (email, isSmoke, isDrink, isWeed) => {
     try{
-        const response = await axios.post(`${API_URL}/add-narcotics`, {email, isSmokeVisible, isDrinkVisible, isWeedVisible, isSmoke, isDrink, isWeed});
+        const response = await axios.post(`${API_URL}/add-narcotics`, {email, isSmoke, isDrink, isWeed});
         return response.data;
 
     }catch (error){

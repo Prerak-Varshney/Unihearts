@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import {useLocalSearchParams, router} from 'expo-router';
 
 import { DetailsScrollViewComponent, AfterScrollBarDetailsComponent, ImageComponent } from '@/components/HomeComponents';
 import Loading from '@/components/Loading';
 import BottomNavigator from "@/components/BottomNavigator";
-
-import { StatusBar } from "expo-status-bar";
 
 import axios from 'axios'
 

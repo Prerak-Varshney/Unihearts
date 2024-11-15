@@ -11,6 +11,7 @@ export default function AuthLayout() {
       <Stack.Screen name="payment" options={{ headerShown: false  }}/>
       <Stack.Screen name="likedYouProfileVisit" options={{ headerShown: false  }}/>
       <Stack.Screen name="matchesProfile" options={{ headerShown: false  }}/>
+      <Stack.Screen name="noNetworkPage" options={{ headerShown: false  }}/>
     </Stack>
   );
 }

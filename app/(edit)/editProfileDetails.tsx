@@ -4,16 +4,11 @@ import { View, Text, TouchableOpacity, Image, Platform, TouchableWithoutFeedback
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
-
 import { useLocalSearchParams, router } from "expo-router";
-
 import Input from "@/components/Input";
 import { postProfileDetails } from "@/api/userDetails";
 import Loading from '../../components/Loading';
-
-
 import * as ImagePicker from 'expo-image-picker';
-
 import axios from 'axios'; 
 import mime from 'mime';
 
@@ -31,6 +26,58 @@ const Profile = () => {
     const [selectProfileImage, setSelectProfileImage] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+    interface Profile {
+        profilePic: string;
+        firstName: string;
+        lastName: string; 
+        birthday: string;
+        gender: string;
+        sexualOrientation: string;
+        height: string;
+        college: string;
+        course: string;
+        year: string;
+        images: {
+            profilePic: string;
+            image1: string;
+            image2: string;
+            image3: string;
+            image4: string;
+            image5: string;
+        };
+        narcotics: {
+            smoke: boolean;
+            drink: boolean;
+            weed: boolean;
+        };
+    }
+    const [profile, setProfile] = useState<Profile | null>(null);
+
+    useEffect(() => {
+        fetchMyProfile();
+    }, []);
+
+    const fetchMyProfile = async() => {
+        try{
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-my-profile`, {email: email});
+
+            const data = response.data.user;
+            setProfile(data);
+            setFirstName(data.firstName);
+            setLastName(data.lastName);
+            setBirthday(data.birthday);
+            setSelectProfileImage(data.images.profilePic);
+            setShouldBirthdayBeVisible(true)
+
+        }catch(error:any){
+            if (error.response) {
+                console.log("Error:", error.response.data.message);
+            } else {
+                console.log("Error:", error.message);
+            }
+        }
+    }
 
     useEffect(() => {
         
@@ -99,7 +146,7 @@ const Profile = () => {
                 return error.postImageData.data;
             }else{
                 setIsLoading(false);
-                console.log("Error:", error);
+                console.log("Error:", error.message);
                 return { success: false, message: "An unknown error occurred in profile image" };
             }
         }
@@ -110,7 +157,7 @@ const Profile = () => {
         }
 
         router.replace({
-            pathname: './quote',
+            pathname: './editProfile',
             params: { email },
         });
         console.log(response);
@@ -130,7 +177,7 @@ const Profile = () => {
 
                         <TouchableOpacity className="border border-black border-dashed rounded-3xl w-1/2 h-40 my-6 " onPress={pickProfileImage}>
                         
-                            <Image source={{uri: selectProfileImage || ''}} className="w-full h-full rounded-3xl"/>
+                            <Image source={{uri: selectProfileImage || profile?.profilePic}} className="w-full h-full rounded-3xl"/>
                         </TouchableOpacity>
                     </View>
                     
@@ -155,7 +202,7 @@ const Profile = () => {
 
                     <View className="w-full justify-end items-center flex flex-col">
                         <TouchableOpacity className='bg-black w-4/5 h-12 rounded-2xl flex justify-center items-center' onPress={profileConfirm}>
-                            <Text className='text-white font-semibold text-sm'>Confirm</Text>
+                            <Text className='text-white font-semibold text-sm'>Edit Profile</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -181,7 +228,7 @@ const Profile = () => {
                     
                 </SafeAreaView> 
             </KeyboardAvoidingView>
-            }
+        }
         </TouchableWithoutFeedback>
     )
 }

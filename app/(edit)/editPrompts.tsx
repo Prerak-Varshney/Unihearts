@@ -5,14 +5,64 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { postPromptsDetails } from '@/api/userDetails';
 import Loading from '../../components/Loading';
+import axios from 'axios';
 
 const WritePrompts = () => {
     const { email, selectedPrompts } = useLocalSearchParams(); 
-    const prompts = selectedPrompts ? JSON.parse(selectedPrompts) : [];
+    const [prompts, setPrompts] = useState<string[]>([]);
 
     const [answers, setAnswers] = useState(Array(prompts.length).fill('')); 
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+    interface Profile {
+        profilePic: string;
+        firstName: string;
+        lastName: string; 
+        birthday: string;
+        gender: string;
+        sexualOrientation: string;
+        height: string;
+        college: string;
+        course: string;
+        year: string;
+        images: {
+            profilePic: string;
+            image1: string;
+            image2: string;
+            image3: string;
+            image4: string;
+            image5: string;
+        };
+        narcotics: {
+            smoke: boolean;
+            drink: boolean;
+            weed: boolean;
+        };
+    }
+
+    useEffect(() => {
+        fetchMyProfile();
+    }, []);
+
+    const fetchMyProfile = async() => {
+        try{
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/get-my-profile`, {email: email});
+
+            const data = response.data.user;
+
+            setPrompts([data.prompts.prompt1, data.prompts.prompt2, data.prompts.prompt3]);
+
+            setAnswers([data.prompts.answer1, data.prompts.answer2, data.prompts.answer3]);
+
+        }catch(error:any){
+            if (error.response) {
+                console.log("Error:", error.response.data.message);
+            } else {
+                console.log("Error:", error.message);
+            }
+        }
+    }
 
     useEffect(() => {
         const isEmpty = answers.some(answer => answer.trim() === '');
@@ -37,7 +87,7 @@ const WritePrompts = () => {
 
         if(response.success){
             return router.replace({
-                pathname: '../(main)/home',
+                pathname: './editProfile',
                 params: { email }
             });
         }
@@ -59,10 +109,10 @@ const WritePrompts = () => {
                     </View>
 
                     <ScrollView contentContainerStyle={{flexGrow: 1, alignItems: 'center', gap:50}}>
-                        {prompts.map((selectedPrompt, index) => (
+                        {prompts.map((prompts, index) => (
                             <View key={index} className='w-full flex justify-center items-center'>
                                 <View className={`w-4/5 h-16 flex flex-row justify-start items-center rounded-lg`}>
-                                    <Text className='text-lg font-semibold text-black'>{selectedPrompt}</Text>
+                                    <Text className='text-lg font-semibold text-black'>{prompts}</Text>
                                 </View>
 
                                 <TextInput
@@ -90,7 +140,7 @@ const WritePrompts = () => {
                                 onPress={() => {sendAnswers()}}
                                 disabled={isButtonDisabled}  
                             >
-                                <Text className='text-white font-semibold text-sm'>Finish</Text>
+                                <Text className='text-white font-semibold text-sm'>Edit Prompts</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
