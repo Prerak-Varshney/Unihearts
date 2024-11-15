@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {useLocalSearchParams, router} from 'expo-router';
@@ -46,10 +47,31 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [noProfile, setNoProfile] = useState<boolean>(false);
     const [profileMatch, setProfileMatch] = useState<boolean>(false);
+    const [count, setCount] = useState(0);
+    const [inTrial, setInTrial] = useState(true);
 
     useEffect(() => {
-        getFirstProfile();
+        getFirstProfile();        
     }, []);
+
+    const postSwipeLimit = async(newCount) => {
+
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/set-swipe-limit`, { email, swipeCount: newCount });
+
+        try{
+            if(response.data.success){
+                if(response.data.plan !== 'Free'){
+                    setInTrial(true);
+                }else{
+                    setCount(response.data.count);
+                    setInTrial(response.data.trial);
+                }
+            }
+
+        } catch(error:any){
+            console.log("Error in trial", error);
+        }
+    }
 
     const getFirstProfile = async() => {
         setIsLoading(true);
@@ -59,11 +81,18 @@ const Home = () => {
             if (response.data.success) {
                 setNoProfile(false);
                 setProfile(response.data.firstProfile);
+
+                if(response.data.plan !== 'Free'){
+                    setInTrial(true);
+                }else{
+                    setCount(response.data.count);
+                    setInTrial(response.data.trial);
+                }
             }else{
                 setNoProfile(true);
             }
         } catch(error:any){
-            console.error("Error:", error.response?.data || error.message);
+            console.log("Error:", error.response?.data || error.message);
             setNoProfile(true);
         } finally {
             setIsLoading(false);
@@ -72,6 +101,9 @@ const Home = () => {
 
     const swipeForLike = async(userEmail, profileEmail) => {
         setProfileMatch(false);
+        let newCount = count + 1;
+        postSwipeLimit(newCount);
+
         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/swipe-for-like`, { email: userEmail, profileEmail });
 
         try{
@@ -82,13 +114,15 @@ const Home = () => {
                 getFirstProfile();
             }
         } catch(error:any){
-            console.error("Error:", error.response?.data || error.message);
+            console.log("Error:", error.response?.data || error.message);
             setNoProfile(true);
         } 
     }
 
     const swipeForDislike = async(userEmail, profileEmail) => {
-        // setProfile(null);
+        let newCount = count + 1;
+        postSwipeLimit(newCount);
+
         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/swipe-for-dislike`, { email: userEmail, profileEmail })
 
         try{
@@ -100,8 +134,21 @@ const Home = () => {
             }
 
         } catch(error:any){
-            console.error("Error:", error.response?.data || error.message);
+            console.log("Error:", error.response?.data || error.message);
             setNoProfile(true); 
+        }
+    }
+
+    const bringBackDislikedProfiles = async() => {
+        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/get-profiles/bring-back-disliked-profiles`, { email });
+
+        try{
+            if (response.data.success) {
+                getFirstProfile();
+                console.log(response.data);
+            }
+        }catch(error){
+            console.log(response.data.error);
         }
     }
 
@@ -111,6 +158,7 @@ const Home = () => {
             <BottomNavigator value={email} />
 
             {isLoading && <Loading />}
+
             {profileMatch && <View className='w-screen h-screen bg-white flex justify-evenly items-center'>
                 <Text className='text-3xl font-bold'>HURREY!!! Match found...</Text>
 
@@ -131,8 +179,18 @@ const Home = () => {
 
             {noProfile && <View className="w-screen h-screen flex justify-center items-center z[999]">
                 <Text className="text-3xl font-semibold">No profiles available</Text>
+                <TouchableOpacity className="w-28 h-10 flex justify-center items-center bg-black rounded-2xl mt-10" onPress={bringBackDislikedProfiles}>
+                    <Text className="text-white text-xs font-semibold">Review Profiles</Text>
+                </TouchableOpacity>
             </View>}
-            {profile && (
+
+            {!inTrial && 
+                <View className="w-screen h-screen flex justify-center items-center z[1000]">
+                    <Text className="text-3xl font-semibold">Your Trial is Over</Text>
+                </View>
+            }
+
+            {profile && inTrial && (
                 <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', backgroundColor: 'white' }}>
                     <View className="w-full h-96">
                         <Image source={{ uri: profile.images.profilePic }} className="w-full h-full" resizeMode="cover" />

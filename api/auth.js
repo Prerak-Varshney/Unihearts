@@ -10,10 +10,10 @@ export const signup = async (email) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -27,10 +27,10 @@ export const verifyEmail = async (email, otp) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -44,10 +44,10 @@ export const signin = async (email) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -60,10 +60,10 @@ export const verifySignin = async (email, otp) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -76,10 +76,10 @@ export const resendOtp = async (email, forSignInOrSignUp) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }

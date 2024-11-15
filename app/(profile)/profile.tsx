@@ -95,11 +95,11 @@ const Profile = () => {
         }catch(error:any){
             if(error.postImageData) {
                 setIsLoading(false);
-                console.error("Error while uploading profile Image:", error.postImageData.data.message);
+                console.log("Error while uploading profile Image:", error.postImageData.data.message);
                 return error.postImageData.data;
             }else{
                 setIsLoading(false);
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
                 return { success: false, message: "An unknown error occurred in profile image" };
             }
         }

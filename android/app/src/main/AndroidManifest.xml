@@ -29,6 +29,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.anonymous.Unilove"/>
         <data android:scheme="exp+unilove"/>
+        <data android:scheme="exp+unihearts"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

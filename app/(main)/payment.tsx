@@ -44,9 +44,9 @@ const Payment = () => {
 
         }catch(error:any){
             if (error.response) {
-                console.error("Error:", error.response.data.message);
+                console.log("Error:", error.response.data.message);
             } else {
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
             }
         }
         
@@ -97,10 +97,10 @@ const Payment = () => {
             }
         } catch(error){
             if(error.response) {
-                console.error("Error:", error.response.data.message);
+                console.log("Error:", error.response.data.message);
                 return error.response.data;
             }else{
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
                 return { success: false, message: "An unknown error occurred in Payment" };
             }
         }
@@ -151,10 +151,10 @@ const Payment = () => {
             }
         } catch(error){
             if(error.response) {
-                console.error("Error:", error.response.data.message);
+                console.log("Error:", error.response.data.message);
                 return error.response.data;
             }else{
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
                 return { success: false, message: "An unknown error occurred in Payment" };
             }
         }

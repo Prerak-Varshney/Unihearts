@@ -9,10 +9,10 @@ export const postGenderDetails = async (email, gender, genderPreference) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -26,10 +26,10 @@ export const postProfileDetails = async (email, firstName, lastName, birthday) =
 
     }catch (error){
         if(error.response) {
-            console.error("Error while uploading profile details:", error.response.data.message);
+            console.log("Error while uploading profile details:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred in profile" };
         }
     }
@@ -42,10 +42,10 @@ export const postCourseDetails = async (email, course, year) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -58,10 +58,10 @@ export const postHeightDetails = async (email, height) => {
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -74,10 +74,10 @@ export const postNarcoticsDetails = async (email, isSmokeVisible, isDrinkVisible
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }
@@ -106,10 +106,10 @@ export const postPromptsDetails = async (
 
     }catch (error){
         if(error.response) {
-            console.error("Error:", error.response.data.message);
+            console.log("Error:", error.response.data.message);
             return error.response.data;
         }else{
-            console.error("Error:", error.message);
+            console.log("Error:", error.message);
             return { success: false, message: "An unknown error occurred" };
         }
     }

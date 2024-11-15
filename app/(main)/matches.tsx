@@ -45,9 +45,9 @@ const Matches = () => {
 
         } catch (error:any){
             if(error.response) {
-                console.error("Error:", error.response.data.message);
+                console.log("Error:", error.response.data.message);
             }else{
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
             }
         }
     }

@@ -60,10 +60,10 @@ const LikedYouProfileVisit = () => {
         }catch(error){
             if (error.response) {
                 setIsLoading(false);
-                console.error("Error:", error.response.data.message);
+                console.log("Error:", error.response.data.message);
             } else {
                 setIsLoading(false);
-                console.error("Error:", error.message);
+                console.log("Error:", error.message);
             }
         }
         
@@ -83,7 +83,7 @@ const LikedYouProfileVisit = () => {
                 return console.log("Error while actions individual profile: ", response.data.message);
             }
         }catch(error:any){
-            console.error("Error:", error.response?.data || error.message);
+            console.log("Error:", error.response?.data || error.message);
         } finally{
             setIsLoading(false);
         }
@@ -103,7 +103,7 @@ const LikedYouProfileVisit = () => {
                 return console.log("Error while actions individual profile: ", response.data.message);
             }
         }catch(error:any){
-            console.error("Error:", error.response?.data || error.message);
+            console.log("Error:", error.response?.data || error.message);
         } finally{
             setIsLoading(false);
         }
